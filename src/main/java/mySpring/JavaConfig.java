@@ -1,5 +1,8 @@
 package mySpring;
 
+import tdd.PDVResolver;
+import tdd.PDVResolverImpl;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,6 +15,7 @@ public class JavaConfig implements Config {
     public JavaConfig() {
         ifc2Impl.put(Speaker.class, ConsoleSpeaker.class);
         ifc2Impl.put(Cleaner.class, PowerCleaner.class);
+        ifc2Impl.put(PDVResolver.class, PDVResolverImpl.class);
     }
 
     @Override

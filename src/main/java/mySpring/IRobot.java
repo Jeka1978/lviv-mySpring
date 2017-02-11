@@ -1,5 +1,7 @@
 package mySpring;
 
+import org.springframework.scheduling.annotation.Async;
+
 import javax.annotation.PostConstruct;
 
 /**
