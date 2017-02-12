@@ -1,6 +1,7 @@
 package mySpring;
 
 import com.sun.scenario.effect.Reflection;
+import lombok.Setter;
 import lombok.SneakyThrows;
 import org.reflections.Reflections;
 
@@ -14,6 +15,7 @@ import java.util.Set;
 /**
  * Created by Evegeny on 10/02/2017.
  */
+@Setter
 public class ObjectFactory {
     private static ObjectFactory ourInstance = new ObjectFactory();
     private Config config = new JavaConfig();

@@ -18,6 +18,10 @@ public class JavaConfig implements Config {
         ifc2Impl.put(PDVResolver.class, PDVResolverImpl.class);
     }
 
+    public void bind(Class ifc, Class impl) {
+        ifc2Impl.put(ifc, impl);
+    }
+
     @Override
     public <T> Class<T> getImpl(Class<T> type) {
         return ifc2Impl.get(type);
