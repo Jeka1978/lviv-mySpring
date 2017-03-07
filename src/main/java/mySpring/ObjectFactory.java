@@ -39,10 +39,9 @@ public class ObjectFactory {
         type = resolveImpl(type);
         String className = type.getName();
 
-        if (type.isAnnotationPresent(Singleton.class)) {
-            if (singletons.containsKey(className)) {
-                return (T) singletons.get(className);
-            }
+
+        if (singletons.containsKey(className)) {
+            return (T) singletons.get(className);
         }
 
         t = type.newInstance();
@@ -67,7 +66,9 @@ public class ObjectFactory {
             );
         }
 
-        singletons.put(className, t);
+        if (type.isAnnotationPresent(Singleton.class)) {
+            singletons.put(className, t);
+        }
 
         return t;
     }
