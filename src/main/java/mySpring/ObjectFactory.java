@@ -8,6 +8,7 @@ import org.reflections.Reflections;
 import javax.annotation.PostConstruct;
 import java.lang.reflect.*;
 import java.util.*;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Created by Evegeny on 10/02/2017.
@@ -18,6 +19,7 @@ public class ObjectFactory {
     private final HashMap<Class, Object> singletonesMap;
     private Config config = new JavaConfig();
     private List<ObjectConfigurer> objectConfigurers = new ArrayList<>();
+    ReentrantLock lock = new ReentrantLock();
     private Reflections scanner = new Reflections("mySpring");
 
     public static ObjectFactory getInstance() {
@@ -49,7 +51,13 @@ public class ObjectFactory {
 
         type = resolveImpl(type);
 
+        Singleton singleton = type.getAnnotation(Singleton.class);
+        if(singleton != null) {
+            lock.lock();
+        }
+
         T t = type.newInstance();
+
         configure(t);
 
         invokeInitMethods(type, t);
@@ -71,12 +79,12 @@ public class ObjectFactory {
             );
         }
 
-        // check whether a type is singleton
-        Singleton singleton = type.getAnnotation(Singleton.class);
         if(singleton != null) {
             singletonesMap.put(type, t);
+            lock.unlock();
         }
 
+        // check whether a type is singleton
         return t;
     }
 
