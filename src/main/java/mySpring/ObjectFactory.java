@@ -7,10 +7,7 @@ import org.reflections.Reflections;
 
 import javax.annotation.PostConstruct;
 import java.lang.reflect.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by Evegeny on 10/02/2017.
@@ -20,6 +17,7 @@ public class ObjectFactory {
     private static ObjectFactory ourInstance = new ObjectFactory();
     private Config config = new JavaConfig();
     private List<ObjectConfigurer> objectConfigurers = new ArrayList<>();
+    Map<String, Object> singletons = new HashMap<String, Object>();
     private Reflections scanner = new Reflections("mySpring");
 
     public static ObjectFactory getInstance() {
@@ -37,9 +35,17 @@ public class ObjectFactory {
 
     @SneakyThrows
     public <T> T createObject(Class<T> type) throws IllegalAccessException, InstantiationException {
+        T t;
         type = resolveImpl(type);
+        String className = type.getName();
 
-        T t = type.newInstance();
+        if (type.isAnnotationPresent(Singleton.class)) {
+            if (singletons.containsKey(className)) {
+                return (T) singletons.get(className);
+            }
+        }
+
+        t = type.newInstance();
         configure(t);
 
         invokeInitMethods(type, t);
@@ -60,6 +66,8 @@ public class ObjectFactory {
 
             );
         }
+
+        singletons.put(className, t);
 
         return t;
     }
