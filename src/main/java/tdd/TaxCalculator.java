@@ -10,8 +10,6 @@ import mySpring.ObjectFactory;
 
 public class TaxCalculator {
 
-
-
     public double afterPDV(double price) {
         double pdv = PDVResolverSingleton.getInstance().getPDV();
         return price * pdv/100 + price;

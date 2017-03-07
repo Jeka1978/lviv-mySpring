@@ -7,10 +7,8 @@ import org.reflections.Reflections;
 
 import javax.annotation.PostConstruct;
 import java.lang.reflect.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Created by Evegeny on 10/02/2017.
@@ -18,8 +16,10 @@ import java.util.Set;
 @Setter
 public class ObjectFactory {
     private static ObjectFactory ourInstance = new ObjectFactory();
+    private final HashMap<Class, Object> singletonesMap;
     private Config config = new JavaConfig();
     private List<ObjectConfigurer> objectConfigurers = new ArrayList<>();
+    ReentrantLock lock = new ReentrantLock();
     private Reflections scanner = new Reflections("mySpring");
 
     public static ObjectFactory getInstance() {
@@ -32,14 +32,32 @@ public class ObjectFactory {
         for (Class<? extends ObjectConfigurer> aClass : classes) {
             objectConfigurers.add(aClass.newInstance());
         }
+
+        // create singletons from config
+        List<Class> singletons = config.getSingletons();
+        singletonesMap = new HashMap<Class, Object>();
+        for(Class aClass: singletons) {
+            Object impl = createObject(aClass);
+            singletonesMap.put(aClass, impl);
+        }
     }
 
 
     @SneakyThrows
     public <T> T createObject(Class<T> type) throws IllegalAccessException, InstantiationException {
+        if(singletonesMap.containsKey(type)) {
+            return (T)singletonesMap.get(type);
+        }
+
         type = resolveImpl(type);
 
+        Singleton singleton = type.getAnnotation(Singleton.class);
+        if(singleton != null) {
+            lock.lock();
+        }
+
         T t = type.newInstance();
+
         configure(t);
 
         invokeInitMethods(type, t);
@@ -61,6 +79,12 @@ public class ObjectFactory {
             );
         }
 
+        if(singleton != null) {
+            singletonesMap.put(type, t);
+            lock.unlock();
+        }
+
+        // check whether a type is singleton
         return t;
     }
 
