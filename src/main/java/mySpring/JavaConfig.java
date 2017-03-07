@@ -3,7 +3,10 @@ package mySpring;
 import tdd.PDVResolver;
 import tdd.PDVResolverImpl;
 
+import java.lang.annotation.Annotation;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -25,5 +28,17 @@ public class JavaConfig implements Config {
     @Override
     public <T> Class<T> getImpl(Class<T> type) {
         return ifc2Impl.get(type);
+    }
+
+    @Override
+    public List<Class> getSingletons() {
+        ArrayList<Class> list = new ArrayList<Class>();
+        for(Class aClass: ifc2Impl.values()) {
+            Annotation attr = aClass.getAnnotation(Singleton.class);
+            if(attr != null) {
+                list.add(aClass);
+            }
+        }
+        return list;
     }
 }
