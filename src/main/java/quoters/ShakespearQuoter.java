@@ -10,6 +10,14 @@ public class ShakespearQuoter implements Quoter {
 
     private String message;
 
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public String getMessage() {
+        return this.message;
+    }
+
     @Override
     public void sayQuote() {
         System.out.println(message);
