@@ -1,5 +1,6 @@
 package mySpring;
 
+import lombok.Getter;
 import org.springframework.scheduling.annotation.Async;
 
 import javax.annotation.PostConstruct;
@@ -11,11 +12,13 @@ public class IRobot {
     @InjectByType
     private Speaker speaker;
     @InjectByType
+    @Getter
     private Cleaner cleaner;
 
     @PostConstruct
     public void init() {
         System.out.println(cleaner.getClass());
+        System.out.println(speaker.getClass());
     }
 
     public void cleanRoom() {

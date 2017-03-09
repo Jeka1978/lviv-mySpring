@@ -1,16 +1,13 @@
 package mySpring;
 
-import com.sun.scenario.effect.Reflection;
+import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import org.reflections.Reflections;
 
 import javax.annotation.PostConstruct;
 import java.lang.reflect.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by Evegeny on 10/02/2017.
@@ -21,6 +18,8 @@ public class ObjectFactory {
     private Config config = new JavaConfig();
     private List<ObjectConfigurer> objectConfigurers = new ArrayList<>();
     private Reflections scanner = new Reflections("mySpring");
+    @Getter
+    private Map<Class, Object> singeltons = new HashMap<>();
 
     public static ObjectFactory getInstance() {
         return ourInstance;
@@ -39,7 +38,8 @@ public class ObjectFactory {
     public <T> T createObject(Class<T> type) throws IllegalAccessException, InstantiationException {
         type = resolveImpl(type);
 
-        T t = type.newInstance();
+        T t = BeforeInitializationConfigurer.configureBeforeInit(type);
+
         configure(t);
 
         invokeInitMethods(type, t);
@@ -50,12 +50,11 @@ public class ObjectFactory {
                         System.out.println("************BENCHMARK*********");
                         System.out.println(method.getName() + " was started");
 
-                        Object retVal = method.invoke(t, args);
+                        Object retVal = method.invoke(t, args); // why t here must be final ???
 
                         System.out.println(method.getName() + " was finished");
                         System.out.println("************BENCHMARK   END*********");
                         return retVal;
-
                     }
 
             );

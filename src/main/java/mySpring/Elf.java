@@ -14,4 +14,11 @@ public class Elf {
     @InjectRandomInt(min = 100, max = 150)
     private int dexterity;
 
+    public void saysmth() {
+        System.out.println("hello im elf");
+    }
+    public void ololo() {
+        System.out.println("ololo");
+    }
+
 }
