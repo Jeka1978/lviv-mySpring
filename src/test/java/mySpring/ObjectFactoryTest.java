@@ -17,7 +17,15 @@ public class ObjectFactoryTest {
         factory.createObject(MySingleton.class);
         factory.createObject(MySingleton.class);
 
-        Assert.assertEquals(1,MySingleton.counter);
+        Assert.assertEquals(1, MySingleton.counter);
     }
 
+    @Test
+    public void testRegularClassCreation() throws Exception {
+        ObjectFactory factory = ObjectFactory.getInstance();
+        factory.createObject(Regular.class);
+        factory.createObject(Regular.class);
+
+        Assert.assertEquals(2, Regular.counter);
+    }
 }
