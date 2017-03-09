@@ -3,6 +3,7 @@ package mySpring;
 /**
  * Created by Evegeny on 11/02/2017.
  */
+
 public class BenchmarkPowerCleaner implements Cleaner {
     @InjectByType
     private PowerCleaner powerCleaner;

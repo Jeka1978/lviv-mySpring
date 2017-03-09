@@ -8,7 +8,5 @@ public class Main {
         ObjectFactory factory = ObjectFactory.getInstance();
         IRobot iRobot = factory.createObject(IRobot.class);
         iRobot.cleanRoom();
-
-
     }
 }
